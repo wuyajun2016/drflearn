@@ -17,6 +17,7 @@ from django.contrib.auth.models import User
 from rest_framework import permissions
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.reverse import reverse
+from rest_framework.decorators import action
 
 
 # 总结：
@@ -24,9 +25,16 @@ from rest_framework.reverse import reverse
 # 1)不通过drf框架，只是加了序列化
 # 2)ApiView，通过drf的Request，Response去处理
 # 3)使用class view，增加复用性
-# 3)GenericAPIView和mixin混合使用，引入了queryset 、serializer_class、lookup_field、pagination_class、filter_backend
-# 4)ListAPIView,其实就继承GenericAPIView加xxxMixin,重写了下get/post/put等方法,让你不用去写像get/post等这样的方法了
-# 5)ModelViewSet,绑定方法发生了变化，并提供了get_object，get_queryset方法
+# 3)GenericAPIView和mixin混合使用，引入了queryset 、serializer_class、lookup_field、pagination_class、filter_backend,
+#    并提供了get_object，get_queryset方法
+#    1 get_queryset(self)返回视图使用的查询集，是列表视图与详情视图获取数据的基础，默认返回queryset属性，可以重写
+#    2 get_serializer_class(self)返回序列化器类，默认返回serializer_class，可以重写
+#    3 get_object(self) 返回详情视图所需的模型类数据对象，默认使用lookup_field参数来过滤queryset
+# 4)ListAPIView,其实就继承GenericAPIView加xxxMixin,重写了下get/post/put等方法,让你不用去写像get/post等这样的方法了，没干其它事了
+# 5)ModelViewSet和ReadOnlyModelViewSet
+#   1 ModelViewSet：继承自GenericAPIVIew,绑定方法发生了变化，同时包括了ListModelMixin、RetrieveModelMixin、
+#     CreateModelMixin、UpdateModelMixin、DestoryModelMixin等
+#   2 ReadOnlyModelViewSet：继承自GenericAPIVIew，同时包括了ListModelMixin、RetrieveModelMixin
 # 二 权限
 # 1)ListAPIView
 # 2)ReadOnlyModelViewSet
@@ -59,8 +67,15 @@ from rest_framework.reverse import reverse
 class SnippetViewSet(viewsets.ModelViewSet):
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)  # api权限控制
 
+    # # 目前没有用到
+    # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
+    # def highlight(self, request, *args, **kwargs):
+    #     snippet = self.get_object()
+    #     return Response(snippet.highlighted)
+
+    # 因为需要创建时，添加创建人，所以要重写下perform_create方法
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
