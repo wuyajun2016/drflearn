@@ -17,7 +17,9 @@ from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include('drf_app.urls')),  # 需要将app中的url注册到django中才能被django识别
+    url(r'^api-auth/', include('rest_framework.urls')),  # api权限认证，增加登录的功能
 ]

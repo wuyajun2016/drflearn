@@ -1,13 +1,24 @@
 from rest_framework import serializers
 from .models import STYLE_CHOICES, Snippet, LANGUAGE_CHOICES
+from django.contrib.auth.models import User
 
 
 # 第二种方法,使用ModelSerializer class
 class SnippetSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')  # api权限控制
+
     class Meta:
         model = Snippet  # 选取模型进行序列化
-        fields = ('id', 'title', 'code', 'linenos', 'language', 'style')  # 模型中需要返回的字段
+        fields = ('id', 'title', 'code', 'linenos', 'language', 'style', 'owner')  # 模型中需要返回的字段
 
+
+# api权限控制
+class UserSerializer(serializers.ModelSerializer):
+    snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=Snippet.objects.all())
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'snippets')
 
 #  第一种方法，使用Serializer class
 # class SnippetSerializer(serializers.Serializer):
