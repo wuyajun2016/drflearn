@@ -35,7 +35,7 @@ from rest_framework.decorators import action
 #   1 ModelViewSet：继承自GenericAPIVIew,绑定方法发生了变化，同时包括了ListModelMixin、RetrieveModelMixin、
 #     CreateModelMixin、UpdateModelMixin、DestoryModelMixin等
 #   2 ReadOnlyModelViewSet：继承自GenericAPIVIew，同时包括了ListModelMixin、RetrieveModelMixin
-# 二 权限
+# 二 登录权限
 # 1)ListAPIView
 # 2)ReadOnlyModelViewSet
 
@@ -65,6 +65,18 @@ from rest_framework.decorators import action
 
 # 第五种写法，利用viewset
 class SnippetViewSet(viewsets.ModelViewSet):
+    """
+    list:
+       GET url: /snippets/   分类列表数据
+    create:
+       POST url: /snippets/  创建分类详情
+    retrieve:
+       GET url: /snippets/1/  获取分类详情
+    update:
+       PUT url: /snippets/1/  修改分类详情
+    delete:
+       DELETE url: /snippets/1/  删除分类详情
+    """
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)  # api权限控制

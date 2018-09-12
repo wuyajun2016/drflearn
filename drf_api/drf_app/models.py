@@ -17,9 +17,11 @@ class Snippet(models.Model):
     linenos = models.BooleanField(default=False)
     language = models.CharField(choices=LANGUAGE_CHOICES, default='python', max_length=100)
     style = models.CharField(choices=STYLE_CHOICES, default='friendly', max_length=100)
+    # on_delete=models.CASCADE表示级联删除，也就是当删除主表的数据时候从表中的数据也随着一起删除
     owner = models.ForeignKey('auth.User', related_name='snippets', on_delete=models.CASCADE)  # api权限控制
     highlighted = models.TextField()
 
+    # 元类主要就定义一些配置，比如下面的排序
     class Meta:
         ordering = ('created',)
 

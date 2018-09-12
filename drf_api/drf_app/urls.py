@@ -24,6 +24,7 @@ from rest_framework.routers import DefaultRouter
 # 方法二
 # 说明：register(prefix, viewset, base_name)  ---prefix 该视图集的路由前缀\viewset 视图集\base_name 路由名称的前缀
 # 如果views中包含action的话，那就会生成类似的链接^snippets/action的方法名/$
+
 router = DefaultRouter()
 router.register(r'snippets', views.SnippetViewSet)
 router.register(r'users', views.UserViewSet)

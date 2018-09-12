@@ -14,12 +14,14 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,re_path
 from django.conf.urls import url, include
+from rest_framework_swagger.views import get_swagger_view
 
-
+schema_view = get_swagger_view(title="drf learn api")
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include('drf_app.urls')),  # 需要将app中的url注册到django中才能被django识别
     url(r'^api-auth/', include('rest_framework.urls')),  # api权限认证，增加登录的功能
+    re_path('^docs/$', schema_view),  # swagger路由:ip/docs
 ]
