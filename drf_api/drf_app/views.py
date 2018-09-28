@@ -79,7 +79,7 @@ class SnippetViewSet(viewsets.ModelViewSet):
     """
     queryset = Snippet.objects.all()
     serializer_class = SnippetSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly,)  # api权限控制
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrReadOnly,)  # api权限控制
 
     # # 目前没有用到
     # @action(detail=True, renderer_classes=[renderers.StaticHTMLRenderer])
